@@ -11,6 +11,21 @@ set "TARGET_LIB_DIR=%TARGET_DIR%\prebuilt\windows\x64\lib"
 set "BRIDGE_BACKUP=%BUILD_DIR%\SDL_config_bridge.h.bak"
 
 echo ============================================================================
+echo [0/4] Cleaning previous build artifacts...
+echo ============================================================================
+if exist "%BUILD_DIR%" (
+    rmdir /S /Q "%BUILD_DIR%"
+    if exist "%BUILD_DIR%" (
+        echo [ERROR] Failed to clean "%BUILD_DIR%". Please close any open files/IDE and retry.
+        goto :error
+    )
+)
+if exist "%TARGET_BIN_DIR%\SDL2.dll" del /F /Q "%TARGET_BIN_DIR%\SDL2.dll"
+if exist "%TARGET_LIB_DIR%\SDL2.lib" del /F /Q "%TARGET_LIB_DIR%\SDL2.lib"
+if exist "%TARGET_LIB_DIR%\SDL2main.lib" del /F /Q "%TARGET_LIB_DIR%\SDL2main.lib"
+
+echo.
+echo ============================================================================
 echo [1/4] Configuring SDL2 with CMake (Visual Studio 16 2019, x64, Release)...
 echo ============================================================================
 cmake -S "%SCRIPT_DIR%." -B "%BUILD_DIR%" ^
@@ -98,6 +113,7 @@ echo   DLL     : %TARGET_BIN_DIR%\SDL2.dll
 echo   LIB     : %TARGET_LIB_DIR%\SDL2.lib, SDL2main.lib
 echo ============================================================================
 endlocal
+pause
 exit /b 0
 
 :copy_lib_error
